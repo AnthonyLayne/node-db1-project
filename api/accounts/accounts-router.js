@@ -17,8 +17,14 @@ router.get("/:id", md.checkAccountId, async (req, res, next) => {
   res.json(req.account);
 });
 
-router.post("/", md.checkAccountPayload, md.checkAccountNameUnique, (req, res, next) => {
+router.post("/", md.checkAccountPayload, md.checkAccountNameUnique, async (req, res, next) => {
   // DO YOUR MAGIC
+  try {
+    const newAcct = await ACCOUNT.create(req.body);
+    res.status(201).json(newAcct);
+  } catch (err) {
+    next(err);
+  }
 });
 
 router.put("/:id", (req, res, next) => {
