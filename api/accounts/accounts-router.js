@@ -20,19 +20,34 @@ router.get("/:id", md.checkAccountId, async (req, res, next) => {
 router.post("/", md.checkAccountPayload, md.checkAccountNameUnique, async (req, res, next) => {
   // DO YOUR MAGIC
   try {
-    const newAcct = await ACCOUNT.create(req.body);
+    const newAcct = await ACCOUNT.create({
+      name: req.body.name.trim(),
+      budget: req.body.budget,
+    });
     res.status(201).json(newAcct);
   } catch (err) {
     next(err);
   }
 });
 
-router.put("/:id", (req, res, next) => {
+router.put("/:id", md.checkAccountId, md.checkAccountPayload, async (req, res, next) => {
   // DO YOUR MAGIC
+  try {
+    const updated = await ACCOUNT.updateById(req.params.id, req.body);
+    res.json(updated);
+  } catch (err) {
+    next(err);
+  }
 });
 
-router.delete("/:id", (req, res, next) => {
+router.delete("/:id", md.checkAccountId, async (req, res, next) => {
   // DO YOUR MAGIC
+  try {
+    await ACCOUNT.deleteById(req.params.id);
+    res.json(req.account);
+  } catch (err) {
+    next(err);
+  }
 });
 
 router.use((err, req, res, next) => {
